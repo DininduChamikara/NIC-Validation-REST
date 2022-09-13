@@ -3,10 +3,12 @@ package Model;
 
 import Utilities.DBconnection;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.RequestDispatcher;
 
 public class User {
 
@@ -101,4 +103,32 @@ public class User {
         
         return users;
     }
+    
+    public static void save(User user){
+        
+        String sql = "INSERT INTO nic_register.users(nic, fullname, address, nationality) VALUES(?,?,?,?)";
+        
+        String nicNumber = user.getNic();
+        String fullname = user.getFullname();
+        String address = user.getAddress();
+        String nationality = user.getNationality();
+        
+        try {
+            Connection con = DBconnection.createConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setString(1, nicNumber);
+            ps.setString(2, fullname);
+            ps.setString(3, address);
+            ps.setString(4, nationality);
+            
+            ps.executeUpdate();
+            System.out.println("Successfully updated the values in db from User.java");
+            
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    
 }
