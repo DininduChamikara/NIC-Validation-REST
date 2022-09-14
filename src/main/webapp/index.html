@@ -30,6 +30,9 @@
                 margin-top: 20px;
                 /*                margin: 20px;*/
             }
+            #error{
+                color: red;
+            }
 
         </style>
     </head>
@@ -143,15 +146,24 @@
                         var derivedBirthdate = result.birthdate;
                         var derivedAge = result.age;
                         var derivedGender = result.gender;
+                        var derivedErrMsg = result.errMsg;
+
+                        console.log("Error msg is " + derivedErrMsg);
+
+                        if (derivedErrMsg == "") {
+                            //Alert box
+                            swal("Good job!", "NIC data retrieved successfully!", "success");
+                            
+                        }
 
                         document.getElementById('nic').value = derivedNic;
                         document.getElementById('birthdate').value = derivedBirthdate;
                         document.getElementById('age').value = derivedAge;
                         document.getElementById('gender').value = derivedGender;
+                        document.getElementById('error').innerHTML = derivedErrMsg;
                     })
 
-                    //Alert box
-                    swal("Good job!", "NIC data retrieved successfully!", "success");
+
 
                 })
 

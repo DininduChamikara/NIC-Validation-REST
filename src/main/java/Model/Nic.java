@@ -1,13 +1,14 @@
-
 package Model;
 
 import java.util.Calendar;
 
 public class Nic {
+
     private String nic;
     private String birthdate;
     private int age;
     private String gender;
+    private String errMsg;
 
     public Nic() {
     }
@@ -50,13 +51,21 @@ public class Nic {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    
-    public static Nic getNicData(User user){
-        
+
+    public String getErrMsg() {
+        return errMsg;
+    }
+
+    public void setErrMsg(String errMsg) {
+        this.errMsg = errMsg;
+    }
+
+    public static Nic getNicData(User user) {
+
         System.out.println("getNicData Started");
-        
-        Nic nic = new Nic(); 
-        
+
+        Nic nic = new Nic();
+
         String nicNum = user.getNic();
         boolean validNic = false;
         boolean newId = false;
@@ -70,14 +79,13 @@ public class Nic {
         int tempMd; // temporary do changes in variable md
         int mon = 0;  // variable for month
         int day;    // variable for date
-        
+
         int currentYear = Calendar.getInstance().get(Calendar.YEAR); // to get current year
         int age;
-        
 
         String birthdate;
 
-        String errMsg = "";
+        String err_Msg = "";
 
         try {
 
@@ -86,7 +94,7 @@ public class Nic {
             if (nicNum.length() == 10 || nicNum.length() == 12) {
                 validNic = true;
             } else {
-                errMsg = "Invalid NIC number";
+                err_Msg = "Invalid NIC number";
             }
 
             if (nicNum.length() == 12 && validNic == true) {
@@ -136,20 +144,29 @@ public class Nic {
             age = currentYear - year;
 
             System.out.println("age is " + age);
-            
-            nic.setNic(nicNum);
-            nic.setBirthdate(birthdate);
-            nic.setAge(age);
-            nic.setGender(sex);
-            
-            System.out.println("nic age is "+ nic.getAge());
-            
+
+            if (validNic) {
+                nic.setNic(nicNum);
+                nic.setBirthdate(birthdate);
+                nic.setAge(age);
+                nic.setGender(sex);
+                nic.setErrMsg(err_Msg);
+            }else{
+                nic.setNic("");
+                nic.setBirthdate("");
+                nic.setAge(0);
+                nic.setGender("");
+                nic.setErrMsg(err_Msg);
+            }
+
+            System.out.println("nic age is " + nic.getAge());
+
         } catch (Exception e) {
             System.out.println("The Error is : " + e.getMessage());
         }
-        
+
         System.out.println("nic number is (from getNicData method) " + nic.getNic());
-        
+
         return nic;
     }
 }
