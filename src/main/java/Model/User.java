@@ -3,10 +3,12 @@ package Model;
 
 import Utilities.DBconnection;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.RequestDispatcher;
 
 public class User {
 
@@ -101,4 +103,123 @@ public class User {
         
         return users;
     }
+    
+    public static void save(User user){
+        
+        String sql = "INSERT INTO nic_register.users(nic, fullname, address, nationality) VALUES(?,?,?,?)";
+        
+        String nicNumber = user.getNic();
+        String fullname = user.getFullname();
+        String address = user.getAddress();
+        String nationality = user.getNationality();
+        
+        try {
+            Connection con = DBconnection.createConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setString(1, nicNumber);
+            ps.setString(2, fullname);
+            ps.setString(3, address);
+            ps.setString(4, nationality);
+            
+            ps.executeUpdate();
+            System.out.println("Successfully saved the values in db from User.java");
+            
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    
+    public static User getUserData(User user){
+        
+        User u = new User();
+        String id = user.getId();
+        ResultSet resultSet;
+        
+        String sql = "SELECT * FROM nic_register.users WHERE id='" + id + "';";
+        
+        try {
+            
+            Connection con = DBconnection.createConnection();
+            Statement stmt = con.createStatement();
+            
+            System.out.println("Statement Created");
+            resultSet = stmt.executeQuery(sql);
+            System.out.println("Resultset is ok");
+            
+            resultSet.next();
+            
+            System.out.println("Result set " + resultSet.getString("id"));
+            
+            u.setId(resultSet.getString("id"));
+            u.setNic(resultSet.getString("nic"));
+            u.setFullname(resultSet.getString("fullname"));
+            u.setAddress(resultSet.getString("address"));
+            u.setNationality(resultSet.getString("nationality"));
+            
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
+        
+        return u;
+    }
+    
+    
+    public static void edit(User user){
+        
+        String sql = "UPDATE nic_register.users SET nic=?, fullname=?, address=?, nationality=? WHERE id=?";
+        
+        String id = user.getId();
+        String nicNumber = user.getNic();
+        String fullname = user.getFullname();
+        String address = user.getAddress();
+        String nationality = user.getNationality();
+        
+        try {
+            Connection con = DBconnection.createConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setString(1, nicNumber);
+            ps.setString(2, fullname);
+            ps.setString(3, address);
+            ps.setString(4, nationality);
+            ps.setString(5, id);
+            
+            ps.executeUpdate();
+            System.out.println("Successfully updated the values in db from User.java");
+            
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public static void deleteUserData(User user){
+        
+        System.out.println("In delete user function");
+        
+        User deletedUser = new User();
+        
+        try{
+            
+            String id = user.getId();
+            
+            Connection con;
+            con = DBconnection.createConnection();
+
+            String sql = "DELETE FROM nic_register.users WHERE id=?";
+             
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setString(1, id);
+            ps.executeUpdate();
+            
+        }catch(Exception e){
+            System.out.println("The Error is : " + e.getMessage());
+        }
+        
+    }
+    
+    
 }
