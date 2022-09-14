@@ -4,6 +4,8 @@
         <title>Registration Form</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
         <style>
             h1{
                 text-align: center;
@@ -34,6 +36,9 @@
     <body>
         <h1>Register Form</h1>
 
+
+
+
         <div class="register-container">
             <a class="btn btn-primary" style="float:right" href="view.html">View All Users</a>
             <br><br>
@@ -50,9 +55,7 @@
 
 
             <!--Form Data Field-->
-            <form action="" method="post" id="form">
-
-                <input type="text" class="invisibleNic" name="invisibleNic" value="" >
+            <form action="view.html" method="post" id="form">
 
                 <div class="form-group">
                     <label for="nic_num">NIC number</label>
@@ -97,10 +100,17 @@
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>
 
+
+
+
+
             <script>
+
+
+
                 var formNicData = document.getElementById('formNicData')
                 var form = document.getElementById('form')
-                
+
                 formNicData.addEventListener('submit', function (e) {
                     console.log("event listner working for try nic")
 
@@ -125,22 +135,24 @@
                             .then(function (response) {
                                 return response.json()
                             })
-                       
-                       derivedData.then(result => {
-                           console.log(result)
-                           
-                           var derivedNic = result.nic;
-                           var derivedBirthdate = result.birthdate;
-                           var derivedAge = result.age;
-                           var derivedGender = result.gender;
-                           
-                           document.getElementById('nic').value = derivedNic;
-                           document.getElementById('birthdate').value = derivedBirthdate;
-                           document.getElementById('age').value = derivedAge;
-                           document.getElementById('gender').value = derivedGender;
-                       })
 
-                       
+                    derivedData.then(result => {
+                        console.log(result)
+
+                        var derivedNic = result.nic;
+                        var derivedBirthdate = result.birthdate;
+                        var derivedAge = result.age;
+                        var derivedGender = result.gender;
+
+                        document.getElementById('nic').value = derivedNic;
+                        document.getElementById('birthdate').value = derivedBirthdate;
+                        document.getElementById('age').value = derivedAge;
+                        document.getElementById('gender').value = derivedGender;
+                    })
+
+                    //Alert box
+                    swal("Good job!", "NIC data retrieved successfully!", "success");
+
                 })
 
                 form.addEventListener('submit', function (e) {
@@ -156,25 +168,55 @@
 
                     console.log("address is " + address);
 
-                    // fetch post request
-                    fetch("http://localhost:8080/NIC_Validation_REST/resources/user/save-user",
-                            {
-                                method: 'POST',
-                                body: JSON.stringify({
-                                    id: "",
-                                    nic: nic,
-                                    fullname: fullname,
-                                    address: address,
-                                    nationality: nationality,
-                                }),
-                                headers: {
-                                    "Content-type": "application/json; charset=UTF-8"
-                                }
+                    swal({
+                        title: "Do you want to continue?",
+                        icon: "warning",
+                        buttons: {
+                            cancelBtn: {
+                                text: "Cancel"
+                            },
+                            yesBtn: {
+                                text: "Yes",
+                                value: "yes"
                             }
-                    )
-                            .then(function (response) {
-                                return response.json()
-                            })
+                        },
+                        dangerMode: true,
+                    })
+                            .then((value) => {
+                                if (value == "yes") {
+
+                                    // fetch post request
+                                    fetch("http://localhost:8080/NIC_Validation_REST/resources/user/save-user",
+                                            {
+                                                method: 'POST',
+                                                body: JSON.stringify({
+                                                    id: "",
+                                                    nic: nic,
+                                                    fullname: fullname,
+                                                    address: address,
+                                                    nationality: nationality,
+                                                }),
+                                                headers: {
+                                                    "Content-type": "application/json; charset=UTF-8"
+                                                }
+                                            }
+                                    )
+
+                                    swal({
+                                        title: "Good job!",
+                                        text: "New user successfully registered!",
+                                        icon: "success"
+                                    })
+                                            .then((added) => {
+                                                if (added) {
+                                                    document.location.replace('./view.html');
+                                                }
+                                            });
+
+                                } else {
+
+                                }
+                            });
 
                 })
 

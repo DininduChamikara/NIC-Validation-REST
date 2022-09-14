@@ -7,6 +7,9 @@ package Controller;
 
 import static Model.Nic.getNicData;
 import Model.User;
+import static Model.User.deleteUserData;
+import static Model.User.edit;
+import static Model.User.getUserData;
 import static Model.User.save;
 import com.google.gson.Gson;
 import java.util.List;
@@ -60,6 +63,14 @@ public class UserController {
     }
     
     @POST
+    @Path("edit-user")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String editUser(User user) {
+        edit(user);
+        return user.getId();
+    }
+    
+    @POST
     @Path("nic-generate")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -68,8 +79,26 @@ public class UserController {
         return new Gson().toJson(getNicData(user));
     }
     
+    @POST
+    @Path("retrieve-db")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String dbRetrieve(User user) {
+//        getNicData(user);
+        return new Gson().toJson(getUserData(user));
+    }
+    
+    @POST
+    @Path("delete-user")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void deleteUser(User user) {
+        deleteUserData(user);
+    }
+    
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
     public void putXml(String content) {
     }
+
 }

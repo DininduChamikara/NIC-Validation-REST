@@ -11,6 +11,8 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
         <style>
             h1{
                 text-align: center;
@@ -56,27 +58,107 @@ and open the template in the editor.
         </div>
 
         <script>
+
+            function passEditId(id) {
+
+                swal({
+                    title: "Do you want to edit this?",
+                    icon: "warning",
+                    buttons: {
+                        cancelBtn: {
+                            text:"Cancel"
+                        },
+                        yesBtn: {
+                            text:"Yes",
+                            value:"yes"
+                        }
+                    },
+                    dangerMode: true,
+                })
+                        .then((value) => {
+                            if (value == "yes") {
+                                localStorage.setItem("edit_id", id);
+                                document.location.replace('./edit.html');
+                            } else {
+                                
+                            }
+                        });
+
+                
+                return false;
+            }
+
+
+            const api_url_delete = "http://localhost:8080/NIC_Validation_REST/resources/user/delete-user";
+            
+            
+            function deleteMsgBox(userId){
+                swal({
+                    title: "Do you want to delete?",
+                    icon: "warning",
+                    buttons: {
+                        cancelBtn: {
+                            text:"Cancel"
+                        },
+                        yesBtn: {
+                            text:"Yes",
+                            value:"yes"
+                        }
+                    },
+                    dangerMode: true,
+                })
+                        .then((value) => {
+                            if (value == "yes") {
+                                deleteUser(userId)
+                            } else {
+                                
+                            }
+                        });
+            }
+
+            async function deleteUser(userId) {
+
+                const response = await fetch(api_url_delete,
+                        {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                id: userId,
+                                nic: "",
+                                fullname: "",
+                                address: "",
+                                nationality: "",
+                            }),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }
+                        })              
+                location.reload();
+            }
+
             const api_url_view = "http://localhost:8080/NIC_Validation_REST/resources/user/all-users";
 
             var count;
             var tableContent = "";
 
-            async function getUsers() {
+            async function getAllUsers() {
                 const response = await fetch(api_url_view);
                 const data = await response.json();
+
+                console.log("This is data")
                 console.log(data);
                 count = data.length;
                 console.log("Array size is " + count);
+                dataset = data;
 
                 for (var i = 0; i < count; i++) {
                     tableContent = tableContent +
                             "<tr>" +
-                            "<td>"+data[i].id+"</td>" +
-                            "<td>"+data[i].fullname+"</td>" +
-                            "<td>"+data[i].nic+"</td>" +
-                            "<td>"+data[i].address+"</td>" +
-                            "<td>"+data[i].nationality+"</td>" +
-                            "<td><a class='" + "btn btn-info" + "' href=''>Edit</a>&nbsp;&nbsp; <a class='" + "btn btn-danger" + "'href=''>Delete</a></td>" +
+                            "<td>" + data[i].id + "</td>" +
+                            "<td>" + data[i].fullname + "</td>" +
+                            "<td>" + data[i].nic + "</td>" +
+                            "<td>" + data[i].address + "</td>" +
+                            "<td>" + data[i].nationality + "</td>" +
+                            "<td><a class='" + "btn btn-info" + "' onClick='passEditId(" + data[i].id + ")'>Edit</a>&nbsp;&nbsp; <a class='" + "btn btn-danger" + "'href='#' onClick='deleteMsgBox(" + data[i].id + ")'>Delete</a></td>" +
                             "</tr>"
                             ;
                 }
@@ -85,7 +167,7 @@ and open the template in the editor.
                 console.log("Array size is " + data.length);
             }
 
-            getUsers();
+            getAllUsers();
         </script>
     </body>
 </html>

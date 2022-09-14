@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+
 <html>
     <head>
-        <title>Registration Form</title>
+        <title>Edit User</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -34,10 +34,7 @@
         </style>
     </head>
     <body>
-        <h1>Register Form</h1>
-
-
-
+        <h1>Edit User</h1>
 
         <div class="register-container">
             <a class="btn btn-primary" style="float:right" href="view.html">View All Users</a>
@@ -55,7 +52,7 @@
 
 
             <!--Form Data Field-->
-            <form action="view.html" method="post" id="form">
+            <form action="" method="post" id="form">
 
                 <div class="form-group">
                     <label for="nic_num">NIC number</label>
@@ -97,15 +94,49 @@
                 </div>
                 <br><br>
 
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </form>
-
-
-
-
 
             <script>
 
+                var editId = localStorage.getItem("edit_id");
+                console.log("edit id is " + editId);
+                deriveDbData(editId);
+
+                function deriveDbData(editId) {
+                    var derivedDataDB = fetch("http://localhost:8080/NIC_Validation_REST/resources/user/retrieve-db",
+                            {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    id: editId,
+                                    nic: "",
+                                    fullname: "",
+                                    address: "",
+                                    nationality: "",
+                                }),
+                                headers: {
+                                    "Content-type": "application/json; charset=UTF-8"
+                                }
+                            })
+                            .then(function (response) {
+                                return response.json()
+                            })
+
+                    derivedDataDB.then(result => {
+                        console.log(result)
+
+                        var derivedDbNic = result.nic;
+                        var derivedDbFullname = result.fullname;
+                        var derivedDbAddress = result.address;
+                        var derivedDbNationality = result.nationality;
+
+                        document.getElementById('nic').value = derivedDbNic;
+                        document.getElementById('nicNum').value = derivedDbNic;
+                        document.getElementById('fullname').value = derivedDbFullname;
+                        document.getElementById('address').value = derivedDbAddress;
+                        document.getElementById('nationality').value = derivedDbNationality;
+                    })
+                }
 
 
                 var formNicData = document.getElementById('formNicData')
@@ -186,11 +217,11 @@
                                 if (value == "yes") {
 
                                     // fetch post request
-                                    fetch("http://localhost:8080/NIC_Validation_REST/resources/user/save-user",
+                                    fetch("http://localhost:8080/NIC_Validation_REST/resources/user/edit-user",
                                             {
                                                 method: 'POST',
                                                 body: JSON.stringify({
-                                                    id: "",
+                                                    id: editId,
                                                     nic: nic,
                                                     fullname: fullname,
                                                     address: address,
@@ -201,10 +232,13 @@
                                                 }
                                             }
                                     )
+                                            .then(function (response) {
+                                                return response.json()
+                                            })
 
                                     swal({
                                         title: "Good job!",
-                                        text: "New user successfully registered!",
+                                        text: "User successfully updated!",
                                         icon: "success"
                                     })
                                             .then((added) => {
